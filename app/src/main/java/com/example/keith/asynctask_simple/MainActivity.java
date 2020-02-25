@@ -1,7 +1,7 @@
 package com.example.keith.asynctask_simple;
 
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -52,11 +52,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //reset the text view
+            MainActivity.this.tv.setText("Awaiting results...");
+        }
+
+        @Override
         protected void onPostExecute(Integer integer) {
             //occurs in main thread, called upon completion of doInBackground
             super.onPostExecute(integer);
             but.setEnabled(true);
-            MainActivity.this.tv.setText("result is "+ Integer.toString(integer));
+            MainActivity.this.tv.setText("Result is "+ Integer.toString(integer));
             
         }
     }
