@@ -1,17 +1,31 @@
 package com.example.keith.asynctask_simple;
 
 import android.os.AsyncTask;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.lang.ref.WeakReference;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Integer myInt=100000000;
+    private static final int P_BAR_MAX = 100;
+    private Integer myInt=100;
     private TextView tv;
-    private Button but;
+    private Button butStart;
+    private Button butCancel;
+    ProgressBar pBar;
+
+    //persists accross config changes
+    DataVM myVM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,54 +33,52 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tv = (TextView)findViewById(R.id.textView2);
-        but = (Button)findViewById(R.id.button);
-    }
+        butStart = (Button)findViewById(R.id.bStart);
+        butCancel= (Button)findViewById(R.id.bCancel);
+        pBar = (ProgressBar) findViewById(R.id.progressBar1);
+        pBar.setMax(P_BAR_MAX);
 
-    public void doClick(View view) {
-        but.setEnabled(false);
-        AddTask myTask = new AddTask();
-        myTask.execute(myInt);
-    }
+        // Create a ViewModel the first time the system calls an activity's
+        // onCreate() method.  Re-created activities receive the same
+        // MyViewModel instance created by the first activity.
+        myVM = new ViewModelProvider(this).get(DataVM.class);
 
-    /*
-    If the following class is non static then it will have a hidden reference to its
-    parent, MainActivity.  If the device is rotated while the following
-    thread is running then this reference will keep the garbage collector from
-    collecting the parent activity.  If the thread runs long enough and the
-    device keeps rotating, its memory footprint grows and grows.
-    If its static then no hidden reference, so no memory problems, but its harder to
-    manipulate activity UI.
-     */
-    private class AddTask extends AsyncTask<Integer,Void,Integer>{
+        //if we have a thread running then attach this activity
+        if (myVM.myTask != null) {
+            myVM.myTask.set(new WeakReference<MainActivity>(this));
 
-        @Override
-        protected Integer doInBackground(Integer... integers) {
-            //occurs in new thread
-            Integer res = 0;
-            Integer ival = integers[0];
-
-            while(ival>0){
-                res+=ival--;
-            }
-            return res;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //reset the text view
-            MainActivity.this.tv.setText("Awaiting results...");
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            //occurs in main thread, called upon completion of doInBackground
-            super.onPostExecute(integer);
-            but.setEnabled(true);
-            MainActivity.this.tv.setText("Result is "+ Integer.toString(integer));
-            
+            //a thread is running have the UI show that
+            setUIState(false);
         }
     }
-    
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+    }
+
+    public void doStart(View view) {
+        myVM.myTask = new DataVM.AddTask(new WeakReference<MainActivity>(this));
+        myVM.myTask.execute(myInt);
+     }
+
+    public void setUIState(boolean b){
+        setUIState(b, null);
+    }
+    public void setUIState(boolean b, String s) {
+        butStart.setEnabled(b);
+        butCancel.setEnabled(!b);
+        if(s != null)
+            tv.setText(s);
+        pBar.setProgress(0);
+    }
+
+    public void doCancel(View view) {
+         //try to cancel thread
+        if (myVM.myTask != null) {
+            myVM.myTask.cancel(true);
+        }
+    }
+
 }
