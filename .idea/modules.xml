@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AsyncTask_simple.iml" filepath="$PROJECT_DIR$/AsyncTask_simple.iml" group="AsyncTask_simple" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="AsyncTask_simple/app" />
+      <module fileurl="file://$PROJECT_DIR$/AsyncTask_simple.iml" filepath="$PROJECT_DIR$/AsyncTask_simple.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AsyncTask_simple.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AsyncTask_simple.app.iml" />
     </modules>
   </component>
 </project>

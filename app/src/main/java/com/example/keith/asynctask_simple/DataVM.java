@@ -68,10 +68,17 @@ public class DataVM extends ViewModel {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            //set the UI
-            if (ma.get()!=null) {
+            //see if the weak ref still exists (
+            try {
                 ma.get().setUIState(false, "Launching async task...");
+            } catch (NullPointerException npe) {
+                //what to do here?
             }
+
+            //is there a race condition here?)
+//            if (ma.get()!=null) {
+//                ma.get().setUIState(false, "Launching async task...");
+//            }
         }
 
         @Override
@@ -80,8 +87,11 @@ public class DataVM extends ViewModel {
             Integer progress = values[0] * 1;
 
             //set the UI
-            if (ma.get() !=null)
+            try {
                 ma.get().pBar.setProgress(progress);
+            } catch (NullPointerException npe) {
+                //what to do here?
+            }
         }
 
         @Override
@@ -90,8 +100,10 @@ public class DataVM extends ViewModel {
             super.onPostExecute(retval);
 
             //set the UI
-            if (ma.get()!=null) {
+            try {
                 ma.get().setUIState(true, retval);
+            } catch (NullPointerException npe) {
+                //what to do here?
             }
         }
 
@@ -101,8 +113,10 @@ public class DataVM extends ViewModel {
             super.onCancelled();
 
             //set the UI
-            if (ma.get()!=null) {
+            try {
                 ma.get().setUIState(true, retval);
+            } catch (NullPointerException npe) {
+                //what to do here?
             }
         }
     }

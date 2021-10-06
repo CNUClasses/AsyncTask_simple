@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-
         super.onStop();
     }
 
@@ -64,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
      }
 
     public void setUIState(boolean b){
+
         setUIState(b, null);
     }
     public void setUIState(boolean b, String s) {
